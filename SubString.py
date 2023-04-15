@@ -5,31 +5,31 @@ class Substring:
  
     def badCharHeuristic(string, size):
         '''
-        The preprocessing function for
-        Boyer Moore's bad character heuristic
+        Функция предварительной обработки для
+        Эвристика плохого характера Бойера Мура
         '''
     
-        # Initialize all occurrence as -1
+        # Инициализируйте все вхождения как -1
         badChar = [-1]*Substring.NO_OF_CHARS
     
         # Fill the actual value of last occurrence
         for i in range(size):
             badChar[ord(string[i])] = i
     
-        # return initialized list
+        # возвращает инициализированный список
         return badChar
     
     def searchBM(txt, pat):
         '''
-        A pattern searching function that uses Bad Character
-        Heuristic of Boyer Moore Algorithm
+        Функция поиска по шаблону, использующая 
+        эвристику плохих символов алгоритма Бойера Мура
         '''
         m = len(pat)
         n = len(txt)
     
-        # create the bad character list by calling
-        # the preprocessing function badCharHeuristic()
-        # for given pattern
+        # создайте список плохих симболов, вызвав
+        # функция предварительной обработки badCharHeuristic()
+        # для заданного шаблона
         badChar = Substring.badCharHeuristic(pat, m)
     
         # s is shift of the pattern with respect to text
@@ -37,32 +37,32 @@ class Substring:
         while(s <= n-m):
             j = m-1
     
-            # Keep reducing index j of pattern while
-            # characters of pattern and text are matching
-            # at this shift s
+            # Продолжайте уменьшать индекс j шаблона, пока
+            # символы шаблона и текста совпадают
+            # в этот момент
             while j>=0 and pat[j] == txt[s+j]:
                 j -= 1
-    
-            # If the pattern is present at current shift,
-            # then index j will become -1 after the above loop
+                
+            # Если шаблон присутствует при текущем сдвиге,
+            # то индекс j станет -1 после приведенного выше цикла
             if j<0:
-                print("Pattern occur at shift = {}".format(s))
+                print("Паттерн возникает при сдвиге = {}".format(s))
     
                 '''   
-                    Shift the pattern so that the next character in text
-                        aligns with the last occurrence of it in pattern.
-                    The condition s+m < n is necessary for the case when
-                    pattern occurs at the end of text
+                Сдвиньте шаблон так, чтобы следующий символ в 
+                тексте совпадал с последним его появлением в шаблоне. 
+                Условие s+m < n необходимо для случая, 
+                когда шаблон встречается в конце текста
                 '''
                 s += (m-badChar[ord(txt[s+m])] if s+m<n else 1)
             else:
                 '''
-                Shift the pattern so that the bad character in text
-                aligns with the last occurrence of it in pattern. The
-                max function is used to make sure that we get a positive
-                shift. We may get a negative shift if the last occurrence
-                of bad character in pattern is on the right side of the
-                current character.
+                Сместите шаблон так, чтобы неправильный символ в тексте совпадал 
+                с последним его появлением в шаблоне. 
+                Функция max используется для того, чтобы убедиться, 
+                что мы получаем положительный сдвиг.
+                Мы можем получить отрицательный сдвиг, 
+                если последнее появление плохого символа в шаблоне находится справа от текущего символа.
                 '''
                 s += max(1, j-badChar[ord(txt[s+j])])
     
@@ -72,27 +72,27 @@ class Substring:
         N = len(txt)
         i = 0
         j = 0
-        p = 0    # hash value for pattern
-        t = 0    # hash value for txt
+        p = 0    # хэш-значение для шаблона
+        t = 0    # хэш-значение для txt
         h = 1
     
-        # The value of h would be "pow(d, M-1)% q"
+        # Значение h будет равно "pow(d, M-1)% q".
         for i in range(M-1):
             h = (h * Substring.NO_OF_CHARS)% q
     
-        # Calculate the hash value of pattern and first window
-        # of text
+        # Вычислите хэш-значение шаблона и первого окна
+        # текста
         for i in range(M):
             p = (Substring.NO_OF_CHARS * p + ord(pat[i]))% q
             t = (Substring.NO_OF_CHARS * t + ord(txt[i]))% q
     
-        # Slide the pattern over text one by one
+        # Проведите узором по тексту один за другим
         for i in range(N-M + 1):
-            # Check the hash values of current window of text and
-            # pattern if the hash values match then only check
-            # for characters one by one
+            # Проверьте хэш-значения текущего окна текста и
+            # шаблон, если хэш-значения совпадают, то только проверьте
+            # для символов по одному
             if p == t:
-                # Check for characters one by one
+                # Проверяйте наличие символов один за другим
                 for j in range(M):
                     if txt[i + j] != pat[j]:
                         break
@@ -100,45 +100,45 @@ class Substring:
                 j+= 1
                 # if p == t and pat[0...M-1] = txt[i, i + 1, ...i + M-1]
                 if j == M:
-                    print ("Pattern found at index " + str(i))
+                    print ("Шаблон, найденный по индексу " + str(i))
     
-            # Calculate hash value for next window of text: Remove
-            # leading digit, add trailing digit
+            # Вычислить хэш-значение для следующего окна текста: Удалить
+            # начальная цифра, добавьте конечную цифру
             if i < N-M:
                 t = (Substring.NO_OF_CHARS*(t-ord(txt[i])*h) + ord(txt[i + M]))% q
     
-                # We might get negative values of t, converting it to
-                # positive
+                # Мы могли бы получить отрицательные значения t, преобразовав их в
+                # положительные
                 if t < 0:
                     t = t + q
 
-    # Алгоритм Кнута-Морриса-Пратт
+    # Алгоритм Кнута-Морриса-Пратт (КМП)
     def KMPSearch(pat, txt):
         M = len(pat)
         N = len(txt)
     
-        # create lps[] that will hold the longest prefix suffix
-        # values for pattern
+        # создайте lps[], который будет содержать самый длинный префиксный суффикс
+        # значения для шаблона
         lps = [0]*M
-        j = 0  # index for pat[]
+        j = 0  # индекс для pat[]
     
-        # Preprocess the pattern (calculate lps[] array)
+        # Предварительная обработка шаблона (вычисление массива lps[])
         Substring.computeLPSArray(pat, M, lps)
     
-        i = 0  # index for txt[]
+        i = 0  # индекс для txt[]
         while (N - i) >= (M - j):
             if pat[j] == txt[i]:
                 i += 1
                 j += 1
     
             if j == M:
-                print("Found pattern at index " + str(i-j))
+                print("Обнаруженный паттерн по индексу " + str(i-j))
                 j = lps[j-1]
     
-            # mismatch after j matches
+            # несоответствие после j совпадений
             elif i < N and pat[j] != txt[i]:
-                # Do not match lps[0..lps[j-1]] characters,
-                # they will match anyway
+                # Не совпадайте с символами lps[0..lps[j-1]],
+                # они все равно будут совпадать
                 if j != 0:
                     j = lps[j-1]
                 else:
@@ -146,25 +146,20 @@ class Substring:
     
     
     def computeLPSArray(pat, M, lps):
-        len = 0  # length of the previous longest prefix suffix
+        len = 0  
     
-        lps[0] = 0 # lps[0] is always 0
+        lps[0] = 0 
         i = 1
     
-        # the loop calculates lps[i] for i = 1 to M-1
+        # цикл вычисляет lps[i] для i = 1 до M-1
         while i < M:
             if pat[i] == pat[len]:
                 len += 1
                 lps[i] = len
                 i += 1
             else:
-                # This is tricky. Consider the example.
-                # AAACAAAA and i = 7. The idea is similar
-                # to search step.
                 if len != 0:
                     len = lps[len-1]
-    
-                    # Also, note that we do not increment i here
                 else:
                     lps[i] = 0
                     i += 1
@@ -172,23 +167,23 @@ class Substring:
     # Алгоритм на конечных автоматах
     def getNextState(pat, M, state, x):
         '''
-        calculate the next state
+        вычислите следующее состояние
         '''
     
-        # If the character c is same as next character
-        # in pattern, then simply increment state
+        # Если символ c совпадает со следующим символом
+        # в шаблоне, затем просто увеличьте состояние
     
         if state < M and x == ord(pat[state]):
             return state+1
     
         i=0
-        # ns stores the result which is next state
+        # ns сохраняет результат, который является следующим состоянием
     
-        # ns finally contains the longest prefix
-        # which is also suffix in "pat[0..state-1]c"
+        # ns, наконец, содержит самый длинный префикс
+        # который также является суффиксом в "pat[0..state-1]c"
     
-        # Start from the largest possible value and
-        # stop when you find a prefix which is also suffix
+        # Начните с максимально возможного значения и
+        # остановитесь, когда найдете префикс, который также является суффиксом
         for ns in range(state,0,-1):
             if ord(pat[ns-1]) == x:
                 while(i<ns-1):
@@ -201,8 +196,8 @@ class Substring:
     
     def computeTF(pat, M):
         '''
-        This function builds the TF table which
-        represents Finite Automata for a given pattern
+        Эта функция строит таблицу TF, 
+        которая представляет конечные автоматы для данного шаблона
         '''
         
     
@@ -218,17 +213,16 @@ class Substring:
     
     def searchEA(pat, txt):
         '''
-        Prints all occurrences of pat in txt
+        Печатает все вхождения pat в формате txt
         '''
         
         M = len(pat)
         N = len(txt)
         TF = Substring.computeTF(pat, M)   
-    
-        # Process txt over FA.
+        
         state=0
         for i in range(N):
             state = TF[state][ord(txt[i])]
             if state == M:
-                print("Pattern found at index: {}".\
+                print("Шаблон, найденный по индексу: {}".\
                     format(i-M+1))
